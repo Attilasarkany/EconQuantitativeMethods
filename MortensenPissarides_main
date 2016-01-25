@@ -1,0 +1,45 @@
+%Main program for Mortensen-Pissarides model with aggregate fluctuations
+
+
+%%
+%Parameter values
+delta = 0.0081;
+alpha = 0.72;
+A = 0.158;
+rho = 0.9895;
+sigma = 0.0034;
+mu = 0.72;
+b = 0.4;
+kappa = 0.6;
+beta = 0.999;
+
+
+%%
+%================Discretize AR(1) process as a Markov Chain===============
+%%
+%Tauchen's method
+N = 30; %No. of grid points
+
+
+%%
+%Rouwenhorst method
+
+
+
+%%
+%=============Solve the N equations in N unknowns (Equation 7)=============
+%%
+%Newton's method
+
+
+%%
+%Quasi-Newton's method
+
+
+
+
+%%
+%Hagedorn and Manovskii (2008) 
+mu = 0.05;
+b = 0.95;
+
