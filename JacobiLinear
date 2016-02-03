@@ -1,0 +1,30 @@
+function x = JacobiLinear(A, b, x0, tol, N);
+%x: solution of the system of equations A*x = b using Jacobi's method
+%%inputs:
+%A: the matrix of coefficients
+%b: the vector of constants
+%x0: intial value
+%tol: error of tolerance
+%N: maximum iterations
+b = reshape(b,[],1); %make sure b is column vector
+
+D = diag(diag(A));
+U = triu(A,1);
+L = A- D- U;
+
+k = 1;
+while k<=N;
+    x = D\(L+U)*x + D\b; 
+    if (x-x0)'*(x-x0) <tol;
+        break;
+    else;
+        k = k+1;
+        x0 = x;
+    end;
+end;
+
+
+
+
+
+end
