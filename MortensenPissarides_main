@@ -1,8 +1,10 @@
 %Main program for Mortensen-Pissarides model with aggregate fluctuations
-
-
 %%
-%Parameter values
+clear all; clc;
+%%
+%Set up environment
+global delta alpha A rho sigma mu b kappa beta z P;
+
 delta = 0.0081;
 alpha = 0.72;
 A = 0.158;
@@ -13,33 +15,20 @@ b = 0.4;
 kappa = 0.6;
 beta = 0.999;
 
-
 %%
 %================Discretize AR(1) process as a Markov Chain===============
 %%
 %Tauchen's method
-N = 30; %No. of grid points
+N = 100; %No. of grid points
 
+z = linspace(-0.01,0.01, N);
+z = reshape(z,[],1); %make sure z is column vector
+log_theta = zeros(size(z)); % log_theta  = ln(theta); what we want to solve
 
+P = Tauchen(z, sigma, rho);%returns the transition matrix P
+% P = [P -ones(size(P,1),1)];
+% x0 = kappa*mu*exp(log_theta)-(kappa/A)*(1-delta + 1/beta)*exp(alpha*log_theta);
+% b = P*(1-mu)*(z-b);
 %%
-%Rouwenhorst method
-
-
-
-%%
-%=============Solve the N equations in N unknowns (Equation 7)=============
-%%
-%Newton's method
-
-
-%%
-%Quasi-Newton's method
-
-
-
-
-%%
-%Hagedorn and Manovskii (2008) 
-mu = 0.05;
-b = 0.95;
-
+%f = P*((1-mu)*(z-b)-kappa*mu*exp(log_theta)+(kappa/A)*(1-delta)*exp(alpha*log_theta))-(kappa/A*beta)*exp(alpha*log_theta);
+res = residual(log_theta);
