@@ -1,0 +1,25 @@
+function p = Tauchen(z, sigma, rho);
+%Discretize AR process z' = rho*z + epsilon, epison ~N(o, sigma2) using Tauchen's method
+%inputs:
+%z: grid points
+%sigma
+%rho: parameter of AR process 
+
+z = reshape(z,[],1); %make sure z is column vector
+c = zeros(size(z,1)-1,1);
+c = (z(1:end-1,1) + z(2:end,1))/2;
+N = size(z, 1);
+mu = 0;
+
+p = zeros(N);
+
+for i = 1:N;
+    p(i,1) = normcdf((c(1,1)-rho*z(i,1))/sigma,mu,sigma);
+    p(i,N) = 1- normcdf((c(end,1)-rho*z(i))/sigma,mu,sigma);
+    for j = 2:N-1;
+        p(i,j) = normcdf((c(j,1)-rho*z(i,1))/sigma,mu,sigma) -  normcdf((c(j-1,1)-rho*z(i,1))/sigma,mu,sigma);
+    end;
+end;
+
+
+end
