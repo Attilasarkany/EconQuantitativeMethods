@@ -1,0 +1,80 @@
+clc; clear;
+
+x0=1.001
+x1=1
+f=inline('0.5-4*x^2+exp(x)','x')
+iterx = x0
+iterx = [iterx;x1]
+iterfx = f(x0)
+iterfx= [iterfx;f(x1)]
+error = 1
+while error >=1e-5  
+x2=x1-(x1-x0)*f(x1)/(f(x1)-f(x0))
+error = abs(f(x2))
+iterx=[iterx;x2] 
+iterfx = [iterfx;f(x2)]
+x0 = x1
+x1= x2
+end
+x = sprintf('%0.6f\n', iterx)
+f = sprintf('%0.6f\n', iterfx)
+
+@@
+clear;
+
+x0=1.001
+x1=1
+f=inline('1-sin(x)-x^2','x')
+iterx = x0
+iterx = [iterx;x1]
+iterfx = f(x0)
+iterfx= [iterfx;f(x1)]
+error = 1
+while error >=1e-5  
+x2=x1-(x1-x0)*f(x1)/(f(x1)-f(x0))
+error = abs(f(x2))
+iterx=[iterx;x2] 
+iterfx = [iterfx;f(x2)]
+x0 = x1
+x1= x2
+end
+x = sprintf('%0.6f\n', iterx)
+f = sprintf('%0.6f\n', iterfx)
+
+@@
+%nonlinear algebraic systerm 
+
+clear;
+x0 = [2;3]
+iterx1=x0'
+syms x y 
+F(1) = x^2+x*y+y^2-3*x-3*y-22
+F(2) = x^2 - x*y -x - 1
+J=jacobian(F)
+error=1
+while error >=1e-5 
+ x=x0(1)
+ y= x0(2)
+ F1=eval(J)
+ Fval=eval(F)
+ x1 = x0-inv(F1)*Fval'
+ error = norm(Fval)
+ iterx1=[iterx1; x1']
+ x0=x1
+end
+x = sprintf('%0.6f\n %0.6f\n', iterx1')
+
+x0 = [0;0]
+iterx2=x0'
+error=1
+while error >=1e-5 
+ x=x0(1)
+ y= x0(2)
+ F1=eval(J)
+ Fval=eval(F)
+ x1 = x0-inv(F1)*Fval'
+ error = norm(Fval)
+ iterx2=[iterx2; x1']
+ x0=x1
+end
+x = sprintf('%0.6f\n %0.6f\n', iterx2')
