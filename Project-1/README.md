@@ -7,7 +7,7 @@ Main program file:
   MortensenPissarides_main
 
 REQUIRED FUNCTIONS:
-  Rouwenhorst.m
+  1. Rouwenhorst.m
 
 
 PROCEDURES:
