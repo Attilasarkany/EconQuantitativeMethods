@@ -19,16 +19,115 @@ beta = 0.999;
 %================Discretize AR(1) process as a Markov Chain===============
 %%
 %Tauchen's method
-N = 100; %No. of grid points
+N = 40; %No. of grid points
 
 z = linspace(-0.01,0.01, N);
 z = reshape(z,[],1); %make sure z is column vector
-log_theta = zeros(size(z)); % log_theta  = ln(theta); what we want to solve
+log_theta = 100000*linspace(-15,-10, N); % log_theta  = ln(theta); what we want to solve
+log_theta = reshape(log_theta,[],1); 
 
 P = Tauchen(z, sigma, rho);%returns the transition matrix P
 % P = [P -ones(size(P,1),1)];
 % x0 = kappa*mu*exp(log_theta)-(kappa/A)*(1-delta + 1/beta)*exp(alpha*log_theta);
 % b = P*(1-mu)*(z-b);
 %%
-%f = P*((1-mu)*(z-b)-kappa*mu*exp(log_theta)+(kappa/A)*(1-delta)*exp(alpha*log_theta))-(kappa/A*beta)*exp(alpha*log_theta);
-res = residual(log_theta);
+%inline function:
+fun = @(x) P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x);
+
+
+
+%%
+%Alternatively, can write the residual function in a separate file
+%res = residual(log_theta);
+%r = @residual; 
+
+%
+%%
+%Rouwenhorst method
+
+
+
+%%
+%=============Minimize residuals (solve the N equations in N unknowns)=============
+%OPTION 1:
+%Solve one equation at a time, use either Jacobi or Seidel's method to plug
+%it back
+%When solving each equation, use either Newton's or quasi-Newton's method
+%Take more iterations to find the solutions
+
+%%
+%Newton's method
+tol = 10^(-4);
+max = 200;
+%compute Jacobian matrix
+x  =sym('x',[N 1]) ;
+%f = P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x);
+f = sym(P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x));
+
+%f = sym(fun);
+Df = jacobian(f, x);
+Df = matlabFunction(Df);
+
+clear x; syms x;
+f = sym(fun);
+Df = jacobian(f, x);
+Df = matlabFunction(Df);
+
+X = Newton(fun, Df, log_theta, tol, max);
+
+%Build Newton's function that solve 1 equation at a time
+%Build Jacobi/Seidel method
+%%
+%Jacobi's approach
+tol = 10^(-4);
+max = 200;
+%Pass Function to Another Function ("function function")
+%http://www.mathworks.com/help/matlab/matlab_prog/pass-a-function-to-another-function.html
+x = Jacobi(fun, x0, tol, max);
+
+%%
+%Seidel's approach
+tol = 10^(-4);
+max = 200;
+x = Seidel(f, x0, tol, max);
+
+%%
+%OPTION 2:
+%Use Newton's method directly, but compute Jacobian for N equations at a
+%time can be costly
+
+
+
+%%
+%Simulate a series
+
+%find stationary distribution vector pi 
+%P*pi = pi and sum(pi) =1 (constrained optimization)
+pi = ;
+
+pi_sum = zeros(size(pi));
+for i = 1:size(pi,1);
+    pi_sum(i) = sum(pi(1:i,1)); 
+end;
+
+M = 20; %length of simulated sequence
+zt = zeros(M+1, 1);
+zt(1) = z(N/2,1); %Initialize from an ad hoc/arbitrary state z0
+rng('default');
+
+s = linspace(1, M, M); %s stores the seed numbers
+for i = 1: M;
+    rng(s(1,i)); %set seeds
+    x(i) = rand;
+    zt(i+1) =  z(find(pi_sum >= x(i),1),1); 
+    %find(pi_sum >= x(i),1) returns the index of the first element in
+    %pi_sum that is greater than x(i)
+end;
+figure;
+plot(zt,linspace(1,M+1,1));
+ylabel('Simulated productivity z from the AR(1) process');
+xlabel('Time');
+%%
+%Hagedorn and Manovskii (2008) 
+mu = 0.05;
+b = 0.95;
