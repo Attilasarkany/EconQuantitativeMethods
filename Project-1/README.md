@@ -4,7 +4,7 @@ Language used:
   Matlab
 
 Main program file:
-  MortensenPissarides_main
+  MortensenPissarides_main.m
 
 REQUIRED FUNCTIONS:
   1. Rouwenhorst.m
