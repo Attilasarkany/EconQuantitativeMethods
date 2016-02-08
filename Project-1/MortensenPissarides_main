@@ -14,13 +14,12 @@ mu = 0.72;
 b = 0.4;
 kappa = 0.6;
 beta = 0.999;
+N = 40; %No. of grid points
 
 %%
 %================Discretize AR(1) process as a Markov Chain===============
 %%
 %Tauchen's method
-N = 40; %No. of grid points
-
 z = linspace(-0.01,0.01, N);
 z = reshape(z,[],1); %make sure z is column vector
 log_theta = 100000*linspace(-15,-10, N); % log_theta  = ln(theta); what we want to solve
@@ -34,8 +33,6 @@ P = Tauchen(z, sigma, rho);%returns the transition matrix P
 %inline function:
 fun = @(x) P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x);
 
-
-
 %%
 %Alternatively, can write the residual function in a separate file
 %res = residual(log_theta);
@@ -44,7 +41,19 @@ fun = @(x) P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(ka
 %
 %%
 %Rouwenhorst method
+P = Rouwenhorst((1+rho)/2, (1+rho)/2, N);
 
+z_bar = 0; %mean of the AR(1) process
+z = linspace(z_bar-sqrt(sigma*(N-1)/(1-rho^2)),z_bar+sqrt(sigma*(N-1)/(1-rho^2)), N);
+z = reshape(z,[],1); %make sure z is column vector
+
+log_theta = 100000*linspace(-15,-10, N); % log_theta  = ln(theta); what we want to solve
+log_theta = reshape(log_theta,[],1); 
+
+%%
+%%
+%inline function:
+fun = @(x) P*((1-mu)*(z-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x);
 
 
 %%
@@ -99,34 +108,68 @@ x = Seidel(f, x0, tol, max);
 
 
 %%
-%Simulate a series
-
 %find stationary distribution vector pi 
-%P*pi = pi and sum(pi) =1 (constrained optimization)
-pi = ;
+%P*pi = pi and sum(pi) =1 
+%%
+%Method 1: constrained optimization
+
+I = diag(ones(N,1));
+g = @(x) ((P-I)*x)'*(P-I)*x; 
+%inner product of the objective function (P-I)*x so that the output is a
+%sclar
+pi0 = ones(N,1)/N;
+Aeq = ones(1,N); %A*pi = 1
+beq = 1;
+pi = fmincon(g, pi0, Aeq, beq);
+%%
+%Method 2: iteration
+t= 0;
+pi0 = ones(1,N)/N;
+tol = 10^(-6);
+err = 1;
+while err>tol;
+    pi = pi0*P;
+    err = (pi-pi0)*(pi-pi0)' ;
+    pi0 = pi;
+    t = t+1;
+end;
+pi = pi';
+
+%%
+%Simulate a series
 
 pi_sum = zeros(size(pi));
 for i = 1:size(pi,1);
     pi_sum(i) = sum(pi(1:i,1)); 
 end;
 
-M = 20; %length of simulated sequence
-zt = zeros(M+1, 1);
-zt(1) = z(N/2,1); %Initialize from an ad hoc/arbitrary state z0
+M = 150; %length of simulated sequence
+z_t = zeros(M+1, 1);
+theta_t = zeros(M+1,1);
+z_t(1,1) = z(N/2,1); %Initialize from an ad hoc/arbitrary state z0
+theta_t(1,1) =theta(N/2,1);%check the notation 'theta' is right
 rng('default');
 
 s = linspace(1, M, M); %s stores the seed numbers
 for i = 1: M;
     rng(s(1,i)); %set seeds
     x(i) = rand;
-    zt(i+1) =  z(find(pi_sum >= x(i),1),1); 
+    z_t(i+1,1) =  z(find(pi_sum >= x(i),1),1); 
+    theta_t(i+1) = theta(find(pi_sum >= x(i),1),1);
     %find(pi_sum >= x(i),1) returns the index of the first element in
     %pi_sum that is greater than x(i)
 end;
 figure;
-plot(zt,linspace(1,M+1,1));
+plot(z_t);
 ylabel('Simulated productivity z from the AR(1) process');
 xlabel('Time');
+
+figure;
+plot(theta_t, linspace(1,M+1,1));
+ylabel('Simulated market tightness, theta');
+xlabel('Time');
+
+
 %%
 %Hagedorn and Manovskii (2008) 
 mu = 0.05;
