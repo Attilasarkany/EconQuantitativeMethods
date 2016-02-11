@@ -6,12 +6,16 @@ Language used:
 Main program file:
   main.m
 
-REQUIRED FUNCTIONS:
+Required function:
   1. Rouwenhorst.m
 
+Results and graphs: 
+  output.pdf
 
-PROCEDURES:
+
+Procedures:
   1. set up the environment
   2. discretize the AR(1) process using the Rouwenhorst's method
   3. find the roots for the nonlinear system of equations
-  4. simulate a sequence from the AR(1) process and plot the results
+  4. derive the stationary distribution using iteration
+  5. simulate a sequence from the AR(1) process and plot the results
