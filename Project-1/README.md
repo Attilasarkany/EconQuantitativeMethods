@@ -1,12 +1,12 @@
 This is the README file accompanying Project 1: Mortensen-Pissarides model
 
-Language used: 
+Language used:  
   Matlab
 
-Main program file:
+Main program file:  
   main.m
 
-Required function:
+Required function:  
   Rouwenhorst.m
 
 Results and graphs:   
