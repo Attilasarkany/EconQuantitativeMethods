@@ -7,9 +7,9 @@ Main program file:
   main.m
 
 Required function:
-  1. Rouwenhorst.m
+  Rouwenhorst.m
 
-Results and graphs: 
+Results and graphs:   
   output.pdf
 
 
