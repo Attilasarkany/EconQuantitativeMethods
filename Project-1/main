@@ -32,7 +32,7 @@ N = 40; %No. of grid points
 P = Rouwenhorst((1+rho)/2, (1+rho)/2, N);
 
 log_z_bar = 0; %mean of the AR(1) process
-log_z = linspace(log_z_bar-sqrt(sigma*(N-1)/(1-rho^2)),log_z_bar+sqrt(sigma*(N-1)/(1-rho^2)), N);
+log_z = linspace(log_z_bar-sigma*sqrt((N-1)/(1-rho^2)),log_z_bar+sigma*sqrt((N-1)/(1-rho^2)), N);
 log_z = reshape(log_z,[],1); %make sure z is column vector
 
 %%
@@ -41,13 +41,14 @@ log_z = reshape(log_z,[],1); %make sure z is column vector
 fun = @(x) P*((1-mu)*(exp(log_z)-b)-kappa*mu*exp(x)+(kappa/A)*(1-delta)*exp(alpha*x))-(kappa/A*beta)*exp(alpha*x);
 
 %built-in function: fsolve
-log_theta = linspace(-100, 5, N);
-log_theta = reshape(log_theta,[],1); 
+%log_theta = linspace(-100, 0, N);
+%log_theta = reshape(log_theta,[],1);
+log_theta = zeros(N,1);
 problem.options = optimoptions('fsolve','Display','none','PlotFcns',@optimplotfirstorderopt);
 problem.objective = fun;
 problem.x0 = log_theta;
 problem.solver = 'fsolve';
-problem.MaxFunEvals = 12000;
+%problem.MaxFunEvals = 12000;
 log_theta_new = fsolve(problem);
 
 %%
