@@ -4,4 +4,4 @@ Use Dynare (.mod) to compute a basic RBC model with a few extra, meaningful shoc
 Compute impulse response and moments of the simulated data
 
 
-Reference: Dynanre User's Guide
+Reference: Dynare User's Guide
