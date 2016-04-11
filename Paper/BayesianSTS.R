@@ -4,10 +4,16 @@ install.packages((BoomSpikeSlab) #dependency for bsts
 install.packages((bsts) #package written by Scott 
 #for error "`GLIBCXX_3.4.20' not found", check http://askubuntu.com/questions/575505/glibcxx-3-4-20-not-found-how-to-fix-this-error
 
-
-library(bsts)
+library(BoomSpikeSlab)
+library(bsts) #package written by Scott 
 data(iclaims)
 plot(initial.claims)
+
+#Create a spike and slab prior for use with lm.spike
+prior <- SpikeSlabPrior()
+
+#spike and slab regression
+lm.spike()
 
 bsts_obj <- bsts()
 #generate draws from posterior predictive distributions of a bsts object
