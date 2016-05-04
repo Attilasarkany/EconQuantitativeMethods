@@ -7,8 +7,7 @@ khi=klo+1;
 
 % do the interpolation
 gg = v0(klo,:) + (k-kmat(klo))*(v0(khi,:) - v0(klo,:))/(kmat(khi) - kmat(klo));
-%gg = interp1(kmat,v0,k,'linear');
-%exp(exp(logzgrid(3))) =  2.8613
+
 c =  2.8613*k0^alpha - k + (1-delta)*k0; % consumption
 if c<=0
 val = -8888888888888888-800*abs(c);
