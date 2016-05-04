@@ -54,7 +54,7 @@ end;
 iter = 0;
 error = 100;
 V0 = zeros(N,nstate);
-tic;
+
 while error>10^(-3) && iter<1000        
    for j = 1:nstate
        %given k, logz, find the best kprime
@@ -62,18 +62,15 @@ while error>10^(-3) && iter<1000
     TV1 = TV1';
     TV0(:,j) = TV1;
    end 
-%error = sumsqr(max(abs(V0-TV0))); %% Convergence condition
 error = norm(V0-TV0);
 V0 = TV0; %% If not, the loop updates; otherwise, it stops
 iter = iter+1
 end
 V = TV0;
-toc
 
 
 %%
 figure 
-%subplot(1,2,1)
 plot(kgrid,V(:,1))
 hold on
 plot(kgrid,V(:,2))
@@ -97,14 +94,13 @@ for j = 1:nstate
    end
 end
 
-%subplot(1,2,2)
+figure 
 plot(kgrid,kgrid,'--k')
 hold on
 plot(kgrid,gs(:,1))
 plot(kgrid,gs(:,2))
 plot(kgrid,gs(:,3))
 hold off
-
 legend('45-degree','k_{t+1}=g(k_t, log(z)_t=-0.05)', 'k_{t+1}=g(k_t, log(z)_t=0)', 'k_{t+1}=g(k_t, log(z)_t=0.05)', 'Location','northwest')
 title('Policy function')
 xlabel('k_{t}')
