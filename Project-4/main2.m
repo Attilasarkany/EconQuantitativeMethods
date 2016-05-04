@@ -4,8 +4,6 @@ clear all;clc; close all;
 %Continuous time value function iteration using linear splines
 
 %%
-tic
-
 global v0 beta delta alpha kmat k0 sigma kgrid P logzgrid
 
 %% Parameter values
@@ -85,7 +83,7 @@ while dif>tol && its < maxits
     v0 = v1;
     its = its+1
 end
-toc
+
 %%
 figure 
 plot(kmat,v1(:,1))
