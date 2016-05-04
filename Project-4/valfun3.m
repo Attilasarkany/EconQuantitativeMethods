@@ -1,8 +1,11 @@
 function val=valfun3(k)
+%%Reference: http://www3.nd.edu/~esims1/val_fun_iter.pdf
+%Eric Sims, University of Notre Dame, Spring 2011
+%Continuous time value function iteration using linear splines
+%%
 global v0 beta delta alpha kmat k0 sigma kgrid P logzgrid
 
-klo=max(sum(k>kmat),1); % identify the gridpoint that falls just below . .
-% . . the choice for k
+klo=max(sum(k>kmat),1); 
 khi=klo+1;
 
 % do the interpolation
